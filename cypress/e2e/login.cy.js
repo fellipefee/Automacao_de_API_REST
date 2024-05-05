@@ -1,18 +1,18 @@
-/// <reference types= "cypress"/>
+/// <reference types="cypress" />
 
-describe('Tete de API - Login', () => {
-  it('Deve realizar login com sucesso', () => {
+describe('Login - Teste da API ServRest', () => {
+  it('Deve fazer login com sucesso', () => {
     cy.request({
       method: 'POST',
-      url: 'login',
-      body: {
-        "email": "fulano@qa.com",
-        "password": "teste"
-      }
-    }).then((response) => {
-      cy.log(response.body.authorization)
-      expect(response.body.message).to.equal('Login realizado com sucesso')
-      expect(response.status).to.equal(200)
+      url: 'http://localhost:3000/login',
+      body: { 
+          "email": "fulano@qa.com",
+          "password": "teste"
+        }
+      }).then((response) => {
+        expect(response.status).to.equal(200),
+        expect(response.body.message).to.equal('Login realizado com sucesso')
+        cy.log(response.body.authorization)
+      })
     })
-  })
-})
+  });

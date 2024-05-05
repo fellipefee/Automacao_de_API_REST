@@ -24,30 +24,93 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('token', (email, senha) => {
-    cy.request({
-        method: 'POST',
-        url: 'login',
-        body: {
-          "email": email,
-          "password": senha
-        }
-      }).then(response => {
-        return response.body.authorization
-      })
-})
 
-Cypress.Commands.add('cadastrarProduto', (token, produto, preco, descricao, quantidade) =>{
+Cypress.Commands.add('token', (email, senha) => { 
     cy.request({
         method: 'POST',
-        url: 'produtos',
-        headers: {authorization: token},
-        body: {
-            "nome": produto,
-            "preco": preco,
-            "descricao": descricao,
-            "quantidade": quantidade
-          }, 
-        failOnStatusCode: false
-})
-})
+        url: '/login',
+        body: { 
+            "email": email,
+            "password": senha
+        }
+        }).then((response) => {
+        expect(response.status).to.equal(200)
+        return response.body.authorization
+        })
+    })
+
+    Cypress.Commands.add('cadastrarProduto', (token, produto, preco, descricao, quantidade) =>{
+        cy.request({
+            method: 'POST',
+            url: '/produtos',
+            body: { 
+                "nome": produto,
+                "preco": preco,
+                "descricao": descricao,
+                "quantidade": quantidade
+            },
+            headers: {authorization : token},
+            failOnStatusCode: false
+        })
+    })
+
+    Cypress.Commands.add('deletarProduto', (token, id) => {
+        cy.request({
+            method: 'DELETE',
+            url: `/produtos/${id}`,
+            headers: {authorization : token},
+            
+        })
+    })
+
+    //SJM - 22/08/23 - Criando commands para testes da api do exercicio
+    Cypress.Commands.add('validaEndpointAPI', (endpoint, varJoi) => {
+        cy.request('' + endpoint).then(response => {
+            return varJoi.validateAsync(response.body)
+         })
+    })
+
+    Cypress.Commands.add('getEndpoint', (endpoint) => {
+        cy.request({
+            method: 'GET', //metodo html
+            url: '/'+ endpoint, //url base + endpoint
+         })
+    })
+
+    Cypress.Commands.add('cadastraUsuario', (token, nome, email, password, admin) =>{
+        cy.request({
+            method: 'POST',
+            url: '/usuarios',
+            headers: {authorization : token},
+            body : {
+                "nome": nome ,
+                "email": email + "@qa.com.br" ,
+                "password": password,
+                "administrador": admin
+            },
+            failOnStatusCode: false
+         })
+    })
+
+    Cypress.Commands.add('editaUsuarioCadastrado', (token, id, nome, email, password, admin) =>{
+        cy.request({
+            method: 'PUT',
+            url: `/usuarios/${id}`,
+            headers: {authorization : token},
+            body : {
+                "nome": nome ,
+                "email": email + "@qa.com.br" ,
+                "password": password,
+                "administrador": admin
+            },
+            failOnStatusCode: false
+         })
+    })
+
+    Cypress.Commands.add('deletaRegistroEndpoint', (token, endpoint, id) => {
+        cy.request({
+            method: 'DELETE',
+            url: '/' + endpoint + `/${id}`,
+            headers: {authorization : token},
+        })
+    })
