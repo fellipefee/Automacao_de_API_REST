@@ -17,7 +17,6 @@ import contrato from '../contracts/usuario.contracts'
 
 describe('Testes da Funcionalidade Usuários', () => {
 
-    //SJM - 22/08/23 - Utilizando JOI para teste de contrato
     it('Deve validar contrato de usuários', () => {
         //faz um get em usuarios, atribui para response e valida se response.body é igual ao JOI de usuario
          cy.request('usuarios').then(response => {
